@@ -23,15 +23,21 @@ dependencies:
   dartz: ^0.10.1
     # Remote API
   connectivity: ^3.0.6
-  http: ^0.12.0+2
+  http: ^0.13.5
     # Local cache
   shared_preferences: ^2.0.15
+  #mocktail
+
+
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.0-nullsafety.7
+  mockito: ^5.3.0
+  build_runner: ^2.2.0
+  mocktail: ^0.3.0
+
 
 
   flutter_lints: ^2.0.0
