@@ -9,12 +9,12 @@ class MockNumberTriviaRepository extends Mock
     implements NumberTriviaRepository {}
 
 void main() {
-  late GetConcreteNumberTrivia usecase;
+  late GetConcreteNumberTrivia useCase;
   late MockNumberTriviaRepository mockNumberTriviaRepository;
 
   setUp(() {
     mockNumberTriviaRepository = MockNumberTriviaRepository();
-    usecase = GetConcreteNumberTrivia(mockNumberTriviaRepository);
+    useCase = GetConcreteNumberTrivia(mockNumberTriviaRepository);
   });
 
   const tNumber = 1;
@@ -29,7 +29,7 @@ void main() {
       when(() => mockNumberTriviaRepository.getConcreteNumberTrivia(any()))
           .thenAnswer((_) async => const Right(tNumberTrivia));
       // The "act" phase of the test. Call the not-yet-existent method.
-      final result = await usecase.execute(number: tNumber);
+      final result = await useCase(const Params(number: tNumber));
       // UseCase should simply return whatever was returned from the Repository
       expect(result, const Right(tNumberTrivia));
       // Verify that the method has been called on the Repository
