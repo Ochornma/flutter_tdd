@@ -21,7 +21,7 @@ void main() {
   const tNumberTrivia = NumberTrivia(number: 1, text: 'test');
 
   test(
-    'should get trivia for the number from the repository',
+    'should get trivia for the number from the repositories',
     () async {
       // "On the fly" implementation of the Repository using the Mockito package.
       // When getConcreteNumberTrivia is called with any argument, always answer with
