@@ -3,9 +3,12 @@ import 'package:clean_architecure_course/feature/number_trival/domain/entities/n
 import 'package:clean_architecure_course/feature/number_trival/domain/repository/number-trivial-repository.dart';
 import 'package:dartz/dartz.dart';
 
+import '../../../../error/exception.dart';
 import '../../../../platform/network_info.dart';
 import '../datasources/number_trivia_local_data_source.dart';
 import '../datasources/number_trivia_remote_data_source.dart';
+
+typedef _ConcreteOrRandomChooser<T> = Future<T> Function();
 
 class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   final NumberTriviaRemoteDataSource remoteDataSource;
@@ -19,14 +22,38 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   });
 
   @override
-  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(int number) {
-    // TODO: implement getConcreteNumberTrivia
-    throw UnimplementedError();
+  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
+      int number) async {
+    return await _getTrivia(() {
+      return remoteDataSource.getRandomNumberTrivia();
+    });
   }
 
   @override
-  Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() {
-    // TODO: implement getRandomNumberTrivia
-    throw UnimplementedError();
+  Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
+    return await _getTrivia(() {
+      return remoteDataSource.getRandomNumberTrivia();
+    });
+  }
+
+  Future<Either<Failure, T>> _getTrivia<T>(
+    _ConcreteOrRandomChooser getConcreteOrRandom,
+  ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteTrivia = await getConcreteOrRandom();
+        localDataSource.cacheNumberTrivia(remoteTrivia);
+        return Right(remoteTrivia);
+      } on ServerException {
+        return Left(ServerFailure());
+      }
+    } else {
+      try {
+        final localTrivia = await localDataSource.getLastNumberTrivia();
+        return Right(localTrivia as T);
+      } on CacheException {
+        return Left(CacheFailure());
+      }
+    }
   }
 }
