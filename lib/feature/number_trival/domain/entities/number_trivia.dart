@@ -11,4 +11,11 @@ class NumberTrivia extends Equatable {
 
   @override
   List<Object?> get props => [text, number];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'text': text,
+      'number': number,
+    };
+  }
 }
