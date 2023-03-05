@@ -28,19 +28,19 @@ class NumberTriviaRemoteDataSourceImpl implements NumberTriviaRemoteDataSource {
 
   @override
   Future<NumberTriviaModel> getConcreteNumberTrivia(int number) async {
-    final response = await _getTriviaFromUrl('http://numbersapi.com/$number');
+    final response = await _getTriviaFromUrl('$number');
     return NumberTriviaModel.fromJson(response);
   }
 
   @override
   Future<NumberTriviaModel> getRandomNumberTrivia() async {
-    final response = await _getTriviaFromUrl('http://numbersapi.com/random');
+    final response = await _getTriviaFromUrl('random');
     return NumberTriviaModel.fromJson(response);
   }
 
   Future<Map<String, dynamic>> _getTriviaFromUrl(String url) async {
     final response = await client.get(
-      Uri.parse(url),
+      Uri.parse('http://numbersapi.com/$url'),
       headers: {'Content-Type': 'application/json'},
     );
 
