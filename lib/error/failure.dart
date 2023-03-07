@@ -5,7 +5,7 @@ abstract class Failure extends Equatable {
   // so that Equatable can perform value comparison.
   // const Failure([List properties = const <dynamic>[]]) : super();
 
-  Failure([List properties = const <dynamic>[]]);
+  const Failure([List properties = const <dynamic>[]]);
 
   @override
   List<Object?> get props => [];

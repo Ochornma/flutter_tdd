@@ -8,6 +8,8 @@ abstract class NumberTriviaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+
+//these are the different possible events
 class GetTriviaForConcreteNumber extends NumberTriviaEvent {
   final String numberString;
 
