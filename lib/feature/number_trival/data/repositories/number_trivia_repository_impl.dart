@@ -25,7 +25,7 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
       int number) async {
     return await _getTrivia(() {
-      return remoteDataSource.getRandomNumberTrivia();
+      return remoteDataSource.getConcreteNumberTrivia(number);
     });
   }
 

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 
 import '../../../../error/failure.dart';
 import '../../../../usecase/usecase.dart';
@@ -14,4 +15,9 @@ class GetRandomNumberTrivia extends UseCase<NumberTrivia, NoParams> {
   Future<Either<Failure, NumberTrivia>> call(NoParams params) async {
     return await repository.getRandomNumberTrivia();
   }
+}
+
+class NoParams extends Equatable {
+  @override
+  List<Object?> get props => [];
 }
