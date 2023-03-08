@@ -3,6 +3,8 @@ import 'injection_container.dart' as di;
 
 
 void main() async {
+  //we are using await the di is a future but if not it should be
+  // di.init();
   await di.init();
   runApp(const MyApp());
 }

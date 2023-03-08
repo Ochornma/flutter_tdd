@@ -14,6 +14,9 @@ import 'feature/number_trival/domain/usecases/get_random_number_trivia.dart';
 import 'package:http/http.dart' as http;
 
 final sl = GetIt.instance;
+
+//we are using future because of the shared prefrence but if not it should be
+// void init() async {
 Future<void> init() async {
   sl.registerFactory(() => NumberTriviaBloc(
       getConcreteNumberTrivia: sl(),
