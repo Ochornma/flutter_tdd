@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:clean_architecure_course/error/failure.dart';
 import 'package:clean_architecure_course/feature/number_trival/domain/entities/number_trivia.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +19,15 @@ const String INVALID_INPUT_FAILURE_MESSAGE =
     'Invalid Input - The number must be a positive integer or zero.';
 
 class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
-
   final GetConcreteNumberTrivia getConcreteNumberTrivia;
   final GetRandomNumberTrivia getRandomNumberTrivia;
   final InputConverter inputConverter;
 
-  NumberTriviaBloc({
-    required this.getConcreteNumberTrivia,
-    required this.getRandomNumberTrivia,
-    required this.inputConverter}) : super(Empty()) {
+  NumberTriviaBloc(
+      {required this.getConcreteNumberTrivia,
+        required this.getRandomNumberTrivia,
+        required this.inputConverter})
+      : super(Empty()) {
     on<NumberTriviaEvent>(mapEventToState);
   }
 
@@ -34,31 +36,25 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       Emitter<NumberTriviaState> emit,
       ) async* {
     try {
-
       emit(Loading());
       if (event is GetTriviaForConcreteNumber) {
-    final inputEither = inputConverter.stringToUnsignedInteger(event.numberString);
-    yield* inputEither.fold((failure) async* {
-      emit(const Error(errorMessage: INVALID_INPUT_FAILURE_MESSAGE));
-    }, (integer) async* {
-         final numberTrivia = await getConcreteNumberTrivia.call(Params(number: integer));
-      // emit(Loaded(numberTrivia: numberTrivia))
-    });
+        final inputEither =
+        inputConverter.stringToUnsignedInteger(event.numberString);
+        yield* inputEither.fold((failure) async* {
+          emit(const Error(errorMessage: INVALID_INPUT_FAILURE_MESSAGE));
+        }, (integer) async* {
+          yield Loading();
+          final numberTriviaEither =
+          await getConcreteNumberTrivia.call(Params(number: integer));
+          yield* _eitherLoadedOrErrorState(numberTriviaEither);
+        });
+      } else if (event is GetTriviaForRandomNumber) {
+        yield Loading();
+        final numberTriviaEither = await getRandomNumberTrivia.call(NoParams());
+        yield* _eitherLoadedOrErrorState(numberTriviaEither);
       }
-
-      if (event is GetTriviaForRandomNumber) {
-        final numberTrivia = await getRandomNumberTrivia.call(NoParams());
-      }
-
-    //  final categoriesModel = await _apiRepository.fetchCategoriesList();
-
-    //  emit(AllCategoriesLoaded(categoriesModel));
-
-    /*  if (categoriesModel.error != null) {
-        emit(AllCategoriesError(categoriesModel.error));
-      }*/
     } catch (e) {
-      emit(const Error(errorMessage: UNKNOWN_FAILURE_MESSAGE));
+      yield (const Error(errorMessage: UNKNOWN_FAILURE_MESSAGE));
     }
   }
 
@@ -69,6 +65,27 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
     // for the event to be smart casted
     if (event is GetTriviaForConcreteNumber) {
       inputConverter.stringToUnsignedInteger(event.numberString);
+    }
+  }
+
+  Stream<NumberTriviaState> _eitherLoadedOrErrorState(
+      Either<Failure, NumberTrivia> either,
+      ) async* {
+    yield either.fold(
+          (failure) => Error(errorMessage: _mapFailureToMessage(failure)),
+          (trivia) => Loaded(numberTrivia: trivia),
+    );
+  }
+
+  String _mapFailureToMessage(Failure failure) {
+    // Instead of a regular 'if (failure is ServerFailure)...'
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return SERVER_FAILURE_MESSAGE;
+      case CacheFailure:
+        return CACHE_FAILURE_MESSAGE;
+      default:
+        return 'Unexpected Error';
     }
   }
 }
