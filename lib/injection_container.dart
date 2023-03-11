@@ -3,7 +3,7 @@ import 'package:clean_architecure_course/feature/number_trival/domain/usecases/g
 import 'package:clean_architecure_course/feature/number_trival/presentation/bloc/number_trivia_bloc.dart';
 import 'package:clean_architecure_course/platform/network_info.dart';
 import 'package:clean_architecure_course/util/input_converter.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:data_connection_checker_nulls/data_connection_checker_nulls.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'feature/number_trival/data/datasources/number_trivia_local_data_source.dart';
